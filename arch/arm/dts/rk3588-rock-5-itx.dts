@@ -8,11 +8,10 @@
 #include "rk3588.dtsi"
 #include "rk3588-u-boot.dtsi"
 #include <dt-bindings/input/input.h>
-#include <dt-bindings/phy/phy-snps-pcie3.h>
 
 / {
-	model = "Radxa ROCK 5B+";
-	compatible = "radxa,rock-5b-plus", "rockchip,rk3588";
+	model = "Radxa ROCK 5 ITX";
+	compatible = "radxa,rock-5-itx", "rockchip,rk3588";
 
 	vcc12v_dcin: vcc12v-dcin {
 		u-boot,dm-pre-reloc;
@@ -35,12 +34,23 @@
 		vin-supply = <&vcc12v_dcin>;
 	};
 
-	led_sys: led-sys {
+	power_led: power-led {
 		u-boot,dm-pre-reloc;
 		compatible = "regulator-fixed";
-		regulator-name = "led_sys";
+		regulator-name = "power_led";
 		enable-active-high;
-		gpio = <&gpio0 RK_PB7 GPIO_ACTIVE_HIGH>; // Turn on user led
+		gpio = <&gpio0 RK_PB7 GPIO_ACTIVE_HIGH>; // Turn on power led
+		regulator-boot-on;
+		regulator-always-on;
+		vin-supply = <&vcc5v0_sys>;
+	};
+
+	user_led: user-led {
+		u-boot,dm-pre-reloc;
+		compatible = "regulator-fixed";
+		regulator-name = "user_led";
+		enable-active-high;
+		gpio = <&gpio0 RK_PC0 GPIO_ACTIVE_HIGH>; // Turn on user led
 		regulator-boot-on;
 		regulator-always-on;
 		vin-supply = <&vcc5v0_sys>;
@@ -84,7 +94,7 @@
 		regulator-min-microvolt = <5000000>;
 		regulator-max-microvolt = <5000000>;
 		enable-active-high;
-		gpio = <&gpio1 RK_PA1 GPIO_ACTIVE_HIGH>;
+		gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_HIGH>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&vcc5v0_host_en>;
 		vin-supply = <&vcc5v0_sys>;
@@ -112,10 +122,6 @@
 	status = "okay";
 };
 
-
-/*******************
-* grf models
-********************/
 &usb2phy2_grf {
 	u-boot,dm-pre-reloc;
 	status = "okay";
@@ -126,9 +132,26 @@
 	status = "okay";
 };
 
-/*******************
-* phy
-********************/
+&usb_host0_ehci {
+	u-boot,dm-pre-reloc;
+	status = "okay";
+};
+
+&usb_host0_ohci {
+	u-boot,dm-pre-reloc;
+	status = "okay";
+};
+
+&usb_host1_ehci {
+	u-boot,dm-pre-reloc;
+	status = "okay";
+};
+
+&usb_host1_ohci {
+	u-boot,dm-pre-reloc;
+	status = "okay";
+};
+
 &u2phy2 {
 	u-boot,dm-pre-reloc;
 	status = "okay";
@@ -151,50 +174,12 @@
 	status = "okay";
 };
 
-&combphy2_psu {
-	u-boot,dm-pre-reloc;
-	status = "okay";
-};
-
-/*******************
-* controlers
-********************/
-&usb_host0_ehci {
-	u-boot,dm-pre-reloc;
-	status = "okay";
-};
-
-&usb_host0_ohci {
-	u-boot,dm-pre-reloc;
-	status = "okay";
-};
-
-&usb_host1_ehci {
-	u-boot,dm-pre-reloc;
-	status = "okay";
-};
-
-&usb_host1_ohci {
-	u-boot,dm-pre-reloc;
-	status = "okay";
-};
-
-&usbhost3_0 {
-	u-boot,dm-pre-reloc;
-	status = "okay";
-};
-
-&usbhost_dwc3_0 {
-	u-boot,dm-pre-reloc;
-	status = "okay";
-};
-
 &pinctrl {
 	usb {
 		u-boot,dm-pre-reloc;
 		vcc5v0_host_en: vcc5v0_host_en {
 			u-boot,dm-pre-reloc;
-			rockchip,pins = <1 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
+			rockchip,pins = <3 RK_PB7 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
 };
